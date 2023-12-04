@@ -108,12 +108,45 @@ class SubmitProject(Resource):
             db.session.commit()
             return {"message": "Project submitted successfully."}, 201
 
+class ClaimOwnership(Resource):
+    def post(self):
+        json = request.get_json()
+        user_id = session.get('user_id')
+
+        if user_id is not None:
+            token_id = json.get('token_id')
+            project_id = json.get('project_id')
+
+            project = Project.query.get(project_id)
+            if not project:
+                return {"error": "Invalid project ID"}, 404
+
+            nft = Nft.query.filter_by(token_id=token_id, project_id=project_id).first()
+
+            # if nft.owner_id is not None:
+            #     return {"error": "NFT is already claimed"}, 400
+
+            if not nft:
+                nft = Nft(
+                    token_id=token_id,
+                    project_id=project_id,
+                    owner= session.get('user_id')
+                )
+
+            nft.owner_id = user_id
+            db.session.add(nft)
+            db.session.commit()
+
+            return {"message": "Ownership claimed successfully"}, 200
+        else:
+            return {"error": "User not logged in"}, 401
 
 api.add_resource(Signup, '/signup', endpoint='signup')
 api.add_resource(CheckSession, '/check_session', endpoint='check_session')
 api.add_resource(Login, '/login', endpoint='login')
 api.add_resource(Logout, '/logout', endpoint='logout')
 api.add_resource(SubmitProject, '/submit_project', endpoint='submit_project')
+api.add_resource(ClaimOwnership, '/claim_ownership', endpoint='claim_ownership')
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
