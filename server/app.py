@@ -8,7 +8,7 @@ from flask_restful import Resource
 
 # Local imports
 from config import app, db, api, bcrypt
-from models import User, Project, Nft
+from models import User, Project, Nft, Review
 
 @app.route('/')
 def index():
@@ -20,7 +20,7 @@ def index_2():
     display_projects=[]
     for project in projects:
         display_projects.append(project.to_dict())
-    return '<h1>Hello</h1>'
+    return '<h1>f{display_projects}</h1>'
 
 class Signup(Resource):
     def post(self):
@@ -123,9 +123,6 @@ class ClaimOwnership(Resource):
 
             nft = Nft.query.filter_by(token_id=token_id, project_id=project_id).first()
 
-            # if nft.owner_id is not None:
-            #     return {"error": "NFT is already claimed"}, 400
-
             if not nft:
                 nft = Nft(
                     token_id=token_id,
@@ -141,12 +138,40 @@ class ClaimOwnership(Resource):
         else:
             return {"error": "User not logged in"}, 401
 
+class LeaveReview(Resource):
+    def post(self):
+        json = request.get_json()
+        user_id = session.get('user_id')
+
+        if user_id is not None:
+            project_id = json.get('project_id')
+            review_text = json.get('review_text')
+
+            is_owner = db.session.query(User).join(User.nfts).join(Nft.project).filter(Project.id == project_id, User.id == user_id).first()
+
+            if not is_owner:
+                return {"error": "You are not the owner of this project. Only owners can leave reviews."}, 403
+
+            review = Review(
+                user_id=user_id,
+                project_id=project_id,
+                review_text=review_text
+            )
+
+            db.session.add(review)
+            db.session.commit()
+
+            return {"message": "Review submitted successfully"}, 201
+        else:
+            return {"error": "User not logged in"}, 401
+
 api.add_resource(Signup, '/signup', endpoint='signup')
 api.add_resource(CheckSession, '/check_session', endpoint='check_session')
 api.add_resource(Login, '/login', endpoint='login')
 api.add_resource(Logout, '/logout', endpoint='logout')
 api.add_resource(SubmitProject, '/submit_project', endpoint='submit_project')
 api.add_resource(ClaimOwnership, '/claim_ownership', endpoint='claim_ownership')
+api.add_resource(LeaveReview, '/leave_review', endpoint='leave_review')
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
