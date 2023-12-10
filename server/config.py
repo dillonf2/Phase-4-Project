@@ -16,6 +16,8 @@ import secrets
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SESSION_COOKIE_SAMESITE'] = None
+app.config['SESSION_COOKIE_SECURE'] = False
 secret_key = secrets.token_hex(32)
 app.config['SECRET_KEY'] = secret_key
 app.json.compact = False
@@ -32,4 +34,4 @@ db.init_app(app)
 api = Api(app)
 
 # Instantiate CORS
-CORS(app)
+CORS(app, supports_credentials=True, origins="http://localhost:3000")

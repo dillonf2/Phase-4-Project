@@ -3,7 +3,7 @@
 # Standard library imports
 
 # Remote library imports
-from flask import request, session
+from flask import request, session, jsonify
 from flask_restful import Resource
 
 # Local imports
@@ -14,13 +14,49 @@ from models import User, Project, Nft, Review
 def index():
     return '<h1>Project Server</h1>'
 
-@app.route('/projects')
-def index_2():
-    projects= Project.query.all()
-    display_projects=[]
-    for project in projects:
-        display_projects.append(project.to_dict())
-    return '<h1>f{display_projects}</h1>'
+@app.route('/projects', methods=['GET'])
+def get_projects():
+    projects = Project.query.all()
+    display_projects = [project.to_dict() for project in projects]
+    return {'projects': display_projects}
+
+@app.route('/my_reviews')
+def my_reviews():
+    user_id = session.get('user_id')
+
+    if user_id:
+        user = User.query.get(user_id)
+
+        if user:
+            reviews = Review.query.filter_by(user_id=user.id).all()
+            reviews_data = [{"id": review.id, "review_text": review.review_text} for review in reviews]
+
+            response = jsonify({'reviews': reviews_data})
+            response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
+            response.headers.add('Access-Control-Allow-Credentials', 'true')
+            return response
+        else:
+            return {"error": "User not found"}, 404
+    else:
+        return {"error": "User not logged in"}, 401
+
+class MyReviews(Resource):
+    def get(self):
+        user_id = session.get('user_id')
+
+        if user_id:
+            user = User.query.get(user_id)
+            
+            if user:
+                # Assuming you have a 'reviews' relationship in your User model
+                reviews_data = [{"id": review.id, "review_text": review.review_text} for review in user.reviews]
+                
+                return {"reviews": reviews_data}, 200
+            else:
+                return {"error": "User not found"}, 404
+        else:
+            return {"error": "User not logged in"}, 401
+                
 
 class Signup(Resource):
     def post(self):
@@ -68,13 +104,15 @@ class CheckSession(Resource):
 class Login(Resource):
     def post(self):
         json = request.get_json()
-        if 'username' not in json or 'password' not in json:
+        username = json.get('username')
+        password = json.get('password')
+
+        if not username or not password or not username.strip() or not password.strip():
             return {'error': 'Both username and password are required'}, 400
 
-        user = User.query.filter_by(username=json['username']).first()
+        user = User.query.filter_by(username=username).first()
 
-        if user and user.authenticate(json['password']):
-
+        if user and user.authenticate(password):
             session['user_id'] = user.id
             return {
                 'username': user.username,
@@ -98,15 +136,27 @@ class Logout(Resource):
 class SubmitProject(Resource):
     def post(self):
         json = request.get_json()
-        user_id= session.get('user_id')
+        user_id = session.get('user_id')
+
         if user_id is not None:
-            project= Project(
-                name= json.get('name'),
-                token_count=json.get('token_count')
+            existing_project = Project.query.filter_by(name=json.get('name')).first()
+
+            if existing_project:
+                return {"error": "A project with the same name already exists"}, 400
+            token_count = json.get('token_count')
+            if int(token_count) <= 0:
+                return {"error": "Token count must be greater than 0"}, 400
+
+            project = Project(
+                name=json.get('name'),
+                token_count=token_count
             )
             db.session.add(project)
             db.session.commit()
+
             return {"message": "Project submitted successfully."}, 201
+        else:
+            return {"error": "User not logged in"}, 401
 
 class ClaimOwnership(Resource):
     def post(self):
@@ -172,6 +222,7 @@ api.add_resource(Logout, '/logout', endpoint='logout')
 api.add_resource(SubmitProject, '/submit_project', endpoint='submit_project')
 api.add_resource(ClaimOwnership, '/claim_ownership', endpoint='claim_ownership')
 api.add_resource(LeaveReview, '/leave_review', endpoint='leave_review')
+# api.add_resource(MyReviews, '/my_reviews', endpoint='my_reviews')
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)

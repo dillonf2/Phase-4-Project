@@ -35,7 +35,19 @@ class Project(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     name= db.Column(db.String, unique=True, nullable=False)
     token_count= db.Column(db.Integer)
-    nfts= db.Relationship('Nft', backref='project')
+
+    project_nfts= db.relationship('Nft', backref='project')
+
+    def get_reviews(self):
+        return (Review.query.filter_by(project_id=self.id).all())
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'token_count': self.token_count,
+            'reviews': [review.to_dict() for review in self.get_reviews()],
+        }
 
 class Nft(db.Model, SerializerMixin):
     __tablename__= 'nfts'
@@ -56,3 +68,11 @@ class Review(db.Model):
 
     user = db.relationship('User', backref='reviews')
     project = db.relationship('Project', backref='reviews')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'project_id': self.project_id,
+            'review_text': self.review_text,
+        }
