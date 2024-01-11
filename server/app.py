@@ -5,6 +5,7 @@
 # Remote library imports
 from flask import request, session, jsonify
 from flask_restful import Resource
+from flask import make_response
 
 # Local imports
 from config import app, db, api, bcrypt
@@ -20,26 +21,6 @@ def get_projects():
     display_projects = [project.to_dict() for project in projects]
     return {'projects': display_projects}
 
-@app.route('/my_reviews')
-def my_reviews():
-    user_id = session.get('user_id')
-
-    if user_id:
-        user = User.query.get(user_id)
-
-        if user:
-            reviews = Review.query.filter_by(user_id=user.id).all()
-            reviews_data = [{"id": review.id, "review_text": review.review_text} for review in reviews]
-
-            response = jsonify({'reviews': reviews_data})
-            response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
-            response.headers.add('Access-Control-Allow-Credentials', 'true')
-            return response
-        else:
-            return {"error": "User not found"}, 404
-    else:
-        return {"error": "User not logged in"}, 401
-
 class MyReviews(Resource):
     def get(self):
         user_id = session.get('user_id')
@@ -48,7 +29,6 @@ class MyReviews(Resource):
             user = User.query.get(user_id)
             
             if user:
-                # Assuming you have a 'reviews' relationship in your User model
                 reviews_data = [{"id": review.id, "review_text": review.review_text} for review in user.reviews]
                 
                 return {"reviews": reviews_data}, 200
@@ -56,7 +36,39 @@ class MyReviews(Resource):
                 return {"error": "User not found"}, 404
         else:
             return {"error": "User not logged in"}, 401
-                
+
+    def patch(self, review_id):
+        user_id= session.get('user_id')
+        json = request.get_json()
+        new_review_text = json.get('review_text')
+
+        if user_id:
+            review = Review.query.filter_by(id=review_id, user_id=user_id).first()
+            
+            if not review:
+                return {"error": "Review not found or you don't have permission to edit"}, 404
+
+            review.review_text = new_review_text
+            db.session.commit()
+            return {"message": "Review updated successfully"}, 200
+         
+        else:
+            return {"error": "User not logged in"}, 401
+    
+    def delete(self, review_id):
+        user_id = session.get('user_id')
+    
+        if user_id:
+            review = Review.query.filter_by(id=review_id, user_id=user_id).first()
+
+            if review:
+                db.session.delete(review)
+                db.session.commit()
+                return {"message": "Review deleted successfully"}, 200
+            else:
+                return {"error": "Review not found or you don't have permission to delete"}, 404
+        else:
+            return {"error": "User not logged in"}, 401
 
 class Signup(Resource):
     def post(self):
@@ -159,6 +171,14 @@ class SubmitProject(Resource):
             return {"error": "User not logged in"}, 401
 
 class ClaimOwnership(Resource):
+    def options(self):
+        response = make_response()
+        response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        response.headers.add("Access-Control-Allow-Methods", "POST")
+        response.headers.add("Access-Control-Allow-Credentials", "true")
+        return response
+
     def post(self):
         json = request.get_json()
         user_id = session.get('user_id')
@@ -166,6 +186,7 @@ class ClaimOwnership(Resource):
         if user_id is not None:
             token_id = json.get('token_id')
             project_id = json.get('project_id')
+            project_name= json.get('project_name')
 
             project = Project.query.get(project_id)
             if not project:
@@ -177,7 +198,8 @@ class ClaimOwnership(Resource):
                 nft = Nft(
                     token_id=token_id,
                     project_id=project_id,
-                    owner= session.get('user_id')
+                    project_name=project_name,
+                    owner=session.get('user_id')
                 )
 
             nft.owner_id = user_id
@@ -189,31 +211,31 @@ class ClaimOwnership(Resource):
             return {"error": "User not logged in"}, 401
 
 class LeaveReview(Resource):
+    def get(self):
+        user_id = session.get('user_id')
+
+        if user_id:
+            owned_nfts_data = [{"id": nft.id, "token_id": nft.token_id, "project_id": nft.project_id, "project_name": nft.project_name} for nft in Nft.query.filter_by(owner=user_id).all()]
+
+            return {"owned_nfts": owned_nfts_data}, 200
+        else:
+            return {"error": "User not logged in"}, 401
     def post(self):
         json = request.get_json()
         user_id = session.get('user_id')
 
-        if user_id is not None:
+        if user_id:
+            user_id = json.get('user_id')
             project_id = json.get('project_id')
             review_text = json.get('review_text')
 
-            is_owner = db.session.query(User).join(User.nfts).join(Nft.project).filter(Project.id == project_id, User.id == user_id).first()
-
-            if not is_owner:
-                return {"error": "You are not the owner of this project. Only owners can leave reviews."}, 403
-
             review = Review(
-                user_id=user_id,
-                project_id=project_id,
-                review_text=review_text
+                user_id= user_id,
+                project_id= project_id,
+                review_text= review_text
             )
-
             db.session.add(review)
             db.session.commit()
-
-            return {"message": "Review submitted successfully"}, 201
-        else:
-            return {"error": "User not logged in"}, 401
 
 api.add_resource(Signup, '/signup', endpoint='signup')
 api.add_resource(CheckSession, '/check_session', endpoint='check_session')
@@ -222,7 +244,9 @@ api.add_resource(Logout, '/logout', endpoint='logout')
 api.add_resource(SubmitProject, '/submit_project', endpoint='submit_project')
 api.add_resource(ClaimOwnership, '/claim_ownership', endpoint='claim_ownership')
 api.add_resource(LeaveReview, '/leave_review', endpoint='leave_review')
-# api.add_resource(MyReviews, '/my_reviews', endpoint='my_reviews')
+api.add_resource(MyReviews, '/my_reviews', endpoint='my_reviews')
+api.add_resource(MyReviews, '/my_reviews/<int:review_id>', endpoint='my_review')
+
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)

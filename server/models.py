@@ -57,6 +57,7 @@ class Nft(db.Model, SerializerMixin):
 
     owner= db.Column(db.Integer, db.ForeignKey('users.id'))
     project_id= db.Column(db.Integer, db.ForeignKey('projects.id'))
+    project_name= db.Column(db.String)
 
 class Review(db.Model):
     __tablename__ = 'reviews'
