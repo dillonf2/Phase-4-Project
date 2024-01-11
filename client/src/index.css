@@ -1,8 +1,8 @@
 :root {
-  --bg: #f8f8f8;
-  --header: #333; 
+  --bg: #d4e5f5;
+  --header: black; 
   --link: #3498db;
-  --text: #555;
+  --text: black;
   --selected-text: #3498db;
 }
 
@@ -37,7 +37,7 @@ nav a {
   color: var(--header);
   font-weight: bold;
   font-size: 16px;
-  transition: color 0.3s ease; /* Smooth color transition */
+  transition: color 0.3s ease;
   position: relative;
 }
 
@@ -57,7 +57,7 @@ nav a.active::before {
   left: 50%;
   transform: translateX(-50%);
   width: 80%;
-  height: 4px; /* Adjust the thickness of the border */
+  height: 4px;
   background-color: var(--selected-bg);
 }
 
@@ -81,7 +81,7 @@ input {
   width: 80%;
   max-width: 400px;
   padding: 10px;
-  margin-bottom: 15px;
+  margin-bottom: 1px;
   box-sizing: border-box;
   margin-left: 20px;
   align-items: left;
@@ -160,4 +160,13 @@ button:hover {
 .claim-ownership-div h5{
   font-size: 12pt;
   text-align: center;
+}
+.claim-ownership-div h3{
+  text-align: center;
+}
+.login-div h1{
+  margin-bottom: 50px;
+}
+.signup-div button{
+  margin-top: 20px;
 }

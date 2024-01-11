@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Switch, Route } from "react-router-dom";
 import Home from "./Home";
 import About from "./About";
@@ -9,20 +9,30 @@ import Signup from "./Signup";
 import MyReviews from "./MyReviews";
 import SubmitProject from "./SubmitProject";
 import ClaimOwnership from "./ClaimOwnership";
-
+import LeaveReview from "./LeaveReview";
 
 function App() {
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
 
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+      setLoggedIn(true);
+    }
+  }, []);
+
   const handleLogin = (userData) => {
     setUser(userData);
+    localStorage.setItem("user", JSON.stringify(userData));
     setLoggedIn(true);
     alert("Login Successful!");
   };
 
   const handleLogout = () => {
     setUser(null);
+    localStorage.removeItem("user");
     setLoggedIn(false)
     alert("Logout Successful!")
   };
@@ -61,7 +71,12 @@ function App() {
           <Route path="/claim-ownership">
             <ClaimOwnership user={user}/>
           </Route>
-        )}                  
+        )}
+        {isLoggedIn && (
+          <Route path="/leave-review">
+            <LeaveReview user={user}/>
+          </Route>
+        )}                         
       </Switch>
     </div>
   );
