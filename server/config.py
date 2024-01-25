@@ -21,7 +21,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = secret_key
 app.json.compact = False
 # No need for Flask-Bcrypt, use bcrypt directly
-bcrypt_app = bcrypt.Bcrypt(app)
+bcrypt_app = bcrypt
 # Define metadata, instantiate db
 metadata = MetaData(naming_convention={
     "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
