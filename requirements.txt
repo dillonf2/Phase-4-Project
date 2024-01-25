@@ -43,5 +43,5 @@ typing-extensions==4.9.0; python_version < '3.9'
 wcwidth==0.2.13
 zipp==3.17.0; python_version >= '3.8'
 gunicorn==21.2.0
-Flask-Bcrypt==0.7.1
+bcrypt==4.1.2
 Werkzeug==3.0.1
