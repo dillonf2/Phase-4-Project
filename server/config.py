@@ -16,7 +16,7 @@ secret_key = "your_secret_key_here"
 
 # Instantiate app, set attributes
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://frankdillon:KKwsChm5QXtAldBrcskxpyNaIcred0lw@dpg-cmopuficn0vc73cj36s0-a.ohio-postgres.render.com/full_stack_project_7adg'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = secret_key
 app.json.compact = False
