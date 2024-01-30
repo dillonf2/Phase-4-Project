@@ -11,10 +11,6 @@ from flask import make_response
 from config import app, db, api, bcrypt
 from models import User, Project, Nft, Review
 
-@app.route('/')
-def index():
-    return '<h1>Project Server</h1>'
-
 @app.route('/projects', methods=['GET'])
 def get_projects():
     projects = Project.query.all()
@@ -247,6 +243,9 @@ api.add_resource(LeaveReview, '/leave_review', endpoint='leave_review')
 api.add_resource(MyReviews, '/my_reviews', endpoint='my_reviews')
 api.add_resource(MyReviews, '/my_reviews/<int:review_id>', endpoint='my_review')
 
+@app.route('/')
+def index():
+    return '<h1>Project Server</h1>'
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
