@@ -15,7 +15,7 @@ function Signup() {
       bio: bio,
     };
     try {
-      const response = await fetch("http://127.0.0.1:5555/signup", {
+      const response = await fetch("https://full-stack-project-rup2.onrender.com/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

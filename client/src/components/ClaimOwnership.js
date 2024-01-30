@@ -12,7 +12,7 @@ function ClaimOwnership({ user }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:5555/projects");
+        const response = await fetch("https://full-stack-project-rup2.onrender.com/projects");
         const data = await response.json();
         setProjects(data.projects);
       } catch (error) {
