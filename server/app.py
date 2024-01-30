@@ -6,6 +6,7 @@
 from flask import request, session, jsonify
 from flask_restful import Resource
 from flask import make_response
+from flask import render_template
 
 # Local imports
 from config import app, db, api, bcrypt
