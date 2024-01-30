@@ -1,4 +1,4 @@
-// Projects.js
+
 import React, { useState, useEffect } from "react";
 import ProjectComponent from "./ProjectComponent";
 
