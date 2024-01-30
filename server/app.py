@@ -244,8 +244,9 @@ api.add_resource(MyReviews, '/my_reviews', endpoint='my_reviews')
 api.add_resource(MyReviews, '/my_reviews/<int:review_id>', endpoint='my_review')
 
 @app.route('/')
-def index():
-    return '<h1>Project Server</h1>'
+@app.route('/<int:id>')
+def index(id=0):
+    return render_template("index.html")
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
