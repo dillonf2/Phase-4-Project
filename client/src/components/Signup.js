@@ -26,7 +26,7 @@ function Signup() {
       if (response.ok) {
         alert("Signup successful!");
       } else {
-        console.error("Signup failed:", response.statusText);
+        alert("Signup failed:", response.statusText);
       }
     } catch (error) {
       console.error("An error occurred during signup:", error);
