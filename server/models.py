@@ -13,7 +13,7 @@ class User(db.Model, SerializerMixin):
     image_url = db.Column(db.String)
     bio = db.Column(db.String)
 
-    owned_nfts = db.relationship('Nft', backref='owner')
+    nfts = db.relationship('Nft', backref='nft_owner')
 
     @property
     def password(self):
