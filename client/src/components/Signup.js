@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
 
 function Signup() {
   const [username, setUsername] = useState("");
@@ -6,21 +8,14 @@ function Signup() {
   const [imageURL, setImageURL] = useState("");
   const [bio, setBio] = useState("");
 
-  const handleSignup = async (e) => {
-    e.preventDefault();
-    const userData = {
-      username: username,
-      password: password,
-      image_url: imageURL,
-      bio: bio,
-    };
+  const handleSignup = async (values, { setSubmitting }) => {
     try {
       const response = await fetch("https://full-stack-project-rup2.onrender.com/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(userData),
+        body: JSON.stringify(values),
       });
 
       if (response.ok) {
@@ -30,6 +25,8 @@ function Signup() {
       }
     } catch (error) {
       console.error("An error occurred during signup:", error);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -37,41 +34,48 @@ function Signup() {
     <div className="signup-div">
       <h1>Welcome New User!</h1>
       <h2>Create an Account Below</h2>
-      <form onSubmit={handleSignup}>
-        <div className="input-group">
-          <label>Username:</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-        </div>
-        <div className="input-group">
-          <label>Password:</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-        <div className="input-group">
-          <label>Profile image URL:</label>
-          <input
-            type="text"
-            value={imageURL}
-            onChange={(e) => setImageURL(e.target.value)}
-          />
-        </div>
-        <div className="input-group">
-          <label>Bio:</label>
-          <input
-            type="text"
-            value={bio}
-            onChange={(e) => setBio(e.target.value)}
-          />
-        </div>
-        <button type="submit">Create Account</button>
-      </form>
+      <Formik
+        initialValues={{
+          username: "",
+          password: "",
+          imageURL: "",
+          bio: "",
+        }}
+        validationSchema={Yup.object({
+          username: Yup.string()
+            .required("Username is required"),
+          password: Yup.string()
+            .required("Password is required"),
+          imageURL: Yup.string()
+            .url("Invalid URL format")
+            .required("Profile image URL is required"),
+          bio: Yup.string()
+        })}
+        onSubmit={handleSignup}
+      >
+        <Form>
+          <div className="input-group">
+            <label>Username:</label>
+            <Field type="text" name="username" value={username} onChange={(e) => setUsername(e.target.value)} />
+            <ErrorMessage name="username" />
+          </div>
+          <div className="input-group">
+            <label>Password:</label>
+            <Field type="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <ErrorMessage name="password" />
+          </div>
+          <div className="input-group">
+            <label>Profile image URL:</label>
+            <Field type="text" name="imageURL" value={imageURL} onChange={(e) => setImageURL(e.target.value)} />
+            <ErrorMessage name="imageURL" />
+          </div>
+          <div className="input-group">
+            <label>Bio:</label>
+            <Field type="text" name="bio" value={bio} onChange={(e) => setBio(e.target.value)} />
+          </div>
+          <button type="submit">Create Account</button>
+        </Form>
+      </Formik>
     </div>
   );
 }
