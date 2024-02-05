@@ -77,7 +77,7 @@ class Signup(Resource):
         if existing_user:
             return {'error': 'Username already exists'}, 422
 
-        hashed_password = bcrypt.generate_password_hash(json['password']).decode('utf-8')
+        hashed_password = bcrypt.hashpw(json['password'].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         image_url = json.get('image_url', 'default_image_url')
         user = User(
             username=json.get('username'), 
@@ -87,7 +87,7 @@ class Signup(Resource):
         )
         db.session.add(user)
         db.session.commit()
-        session['user_id']=user.id
+        session['user_id'] = user.id
         return {
             'username': user.username,
             'id': user.id,
