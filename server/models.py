@@ -74,3 +74,14 @@ class Review(db.Model):
             'project_id': self.project_id,
             'review_text': self.review_text,
         }
+
+class UserProjectAssociation(db.Model):
+    __tablename__ = 'user_project_association'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    project_id = db.Column(db.Integer, db.ForeignKey('projects.id'))
+    web_three_alias = db.Column(db.String)
+
+    user = db.relationship('User', backref='user_project_associations')
+    project = db.relationship('Project', backref='user_project_associations')
