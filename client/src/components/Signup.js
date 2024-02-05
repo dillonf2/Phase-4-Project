@@ -13,8 +13,8 @@ function Signup() {
       bio: "",
     },
     validationSchema: Yup.object({
-      username: Yup.string(),
-      password: Yup.string(),
+      username: Yup.string().min(3, "Username must be at least 3 characters long"),
+      password: Yup.string().min(6, "Password must be at least 6 characters long"),
       imageURL: Yup.string().url("Invalid URL format"),
       bio: Yup.string(),
     }),
