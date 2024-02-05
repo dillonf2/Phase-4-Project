@@ -23,7 +23,7 @@ class User(db.Model, SerializerMixin):
     def password(self, password):
         self._password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
-    def verify_password(self, password):
+    def authenticate(self, password):
         return bcrypt.checkpw(password.encode('utf-8'), self._password_hash.encode('utf-8'))
 
 class Project(db.Model, SerializerMixin):
