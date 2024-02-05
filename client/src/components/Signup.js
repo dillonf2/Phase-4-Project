@@ -13,9 +13,9 @@ function Signup() {
       bio: "",
     },
     validationSchema: Yup.object({
-      username: Yup.string().required("Username is required"),
-      password: Yup.string().required("Password is required"),
-      imageURL: Yup.string().url("Invalid URL format").required("Profile image URL is required"),
+      username: Yup.string(),
+      password: Yup.string(),
+      imageURL: Yup.string().url("Invalid URL format"),
       bio: Yup.string(),
     }),
     onSubmit: async (values) => {
