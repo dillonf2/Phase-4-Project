@@ -16,10 +16,9 @@ function Login({ handleLogin }) {
         },
         body: JSON.stringify({ username, password }),
       });
-  
+      
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
         handleLogin(data);
         history.push('/');
       } else {

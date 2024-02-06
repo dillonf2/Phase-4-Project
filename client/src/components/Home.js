@@ -1,9 +1,5 @@
-import React, { useEffect } from "react";
 
 function Home({ user }) {
-    useEffect(() => {
-        console.log("User information:", user);
-      }, [user]);
   return (
     <div className="home-div">
       <h2>Welcome to NFT Community Review!</h2>

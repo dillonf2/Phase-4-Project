@@ -27,16 +27,17 @@
   -The remainder of the formatting is done via CSS.
 
 ### Server Code
-  -The back-end database features a models.py file with four tables: User, Project, NFT, and Review. 
+  -The back-end database features a models.py file with five tables: User, Project, NFT, UserProjectAssociation, and Review. 
   -The database utilizes flask, and secures passwords securely through encryption via bcrypt.
 
   -Multiple relationships have been established between the data tables, including:
-  -- a One-to-Many relationship between Users and NFTs
-  -- a One-to-Many relationship between projects and NFTs
+  -- a One-to-Many relationship between Users and NFTs.
+  -- a One-to-Many relationship between projects and NFTs.
   -- a One-to-One relationship between NFTs and their project id, project name, and owner.
-  -- a One-to-Many relationship between Reviews and their users and projects
+  -- a One-to-Many relationship between Reviews and their users and projects.
+  -- a Many-to-Many relationship between Users and Projects, established via the UserProjectAssociation table.
 
-  The following server routes are available on the back-end, with their respective methods expected:
+  The following server routes are available along with their methods expected, respectively:
    --[/signup]: expecting a POST request.
    --[/check_session]: expecting a GET request.
    --[/login]: expecting a POST request.
@@ -48,7 +49,8 @@
    --[/my_reviews/<int:review_id>]: expecting a PATCH or DELETE request.
 
 ### Production & Acknowledgements
--This application was built using a template that established the basic folders and code connections one might start with. 
--All functionalities and capabilities the application features, both on the front and the back end, were built by me from scratch with help from AI. 
--For troubleshooting, refactoring, and creative problem solving, I often turned to Chat GPT. Learning remotely, that has been a tremendously helpful resource for me, and I look forward to ways it will help to advance the industry as a whole, mainly through the automation of simple tasks.
--A special thanks goes out to Mr. Enoch Griffin. Enoch is an instructor at Flatiron school who has an impressive and in-depth understanding of all of these different concepts; his ability to assist me, identify issues I was struggling to solve, and provide other creative solutions for me was invaluable. 
+-This application was built using a template that established the basic client and server folders and some basic configurations.
+-All functionalities and capabilities the application features, both on the front and the back end, were built by me from scratch.
+-For troubleshooting, refactoring, and creative problem solving, I often turned to Chat GPT. Learning remotely, AI has been a tremendously helpful resource for me, and I look forward to ways it will help to advance the industry as a whole, mainly through the automation of simple tasks and allowing engineers to focus on more creative problem solving outlets.
+-A special thanks goes out to Mr. Enoch Griffin. Enoch is an instructor at Flatiron school who has an impressive and in-depth understanding of all of these different concepts; his ability to assist me, identify issues I was struggling to solve, and provide other creative solutions for me throughout my work on this project was invaluable. 
+
