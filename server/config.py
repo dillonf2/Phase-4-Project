@@ -7,7 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 import bcrypt
 
-secret_key = "your_secret_key_here"
+secret_key = os.environ.get('SECRET_KEY')
 app = Flask(
     __name__,
     static_url_path='',

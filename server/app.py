@@ -1,14 +1,10 @@
 #!/usr/bin/env python3
 
-# Standard library imports
-
-# Remote library imports
 from flask import request, session, jsonify
 from flask_restful import Resource
 from flask import make_response
 from flask import render_template
 
-# Local imports
 from config import app, db, api, bcrypt
 from models import User, Project, Nft, Review
 
@@ -168,13 +164,13 @@ class SubmitProject(Resource):
             return {"error": "User not logged in"}, 401
 
 class ClaimOwnership(Resource):
-    def options(self):
-        response = make_response()
-        response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
-        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
-        response.headers.add("Access-Control-Allow-Methods", "POST")
-        response.headers.add("Access-Control-Allow-Credentials", "true")
-        return response
+    # def options(self):
+    #     response = make_response()
+    #     response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
+    #     response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+    #     response.headers.add("Access-Control-Allow-Methods", "POST")
+    #     response.headers.add("Access-Control-Allow-Credentials", "true")
+    #     return response
 
     def post(self):
         json = request.get_json()
