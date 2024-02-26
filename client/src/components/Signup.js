@@ -20,7 +20,7 @@ function Signup() {
     }),
     onSubmit: async (values) => {
       try {
-        const response = await fetch("https://full-stack-project-rup2.onrender.com/signup", {
+        const response = await fetch("/signup", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

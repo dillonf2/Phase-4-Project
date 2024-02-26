@@ -8,7 +8,7 @@ function Projects() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("https://full-stack-project-rup2.onrender.com/projects");
+        const response = await fetch("/projects");
         const data = await response.json();
         setProjects(data.projects);
       } catch (error) {
