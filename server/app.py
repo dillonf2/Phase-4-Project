@@ -230,6 +230,14 @@ class LeaveReview(Resource):
             db.session.add(review)
             db.session.commit()
 
+class UserReviews(Resource):
+    def get(self, n):
+        users = User.query.all()
+        breakpoint()
+        qualified_users = [{'user': user.username, 'reviews': len(user.reviews)} for user in users if len(user.reviews) >= n]
+        return jsonify(qualified_users)
+
+    
 api.add_resource(Signup, '/signup', endpoint='signup')
 api.add_resource(CheckSession, '/check_session', endpoint='check_session')
 api.add_resource(Login, '/login', endpoint='login')
@@ -239,6 +247,7 @@ api.add_resource(ClaimOwnership, '/claim_ownership', endpoint='claim_ownership')
 api.add_resource(LeaveReview, '/leave_review', endpoint='leave_review')
 api.add_resource(MyReviews, '/my_reviews', endpoint='my_reviews')
 api.add_resource(MyReviews, '/my_reviews/<int:review_id>', endpoint='my_review')
+api.add_resource(UserReviews, '/user_reviews/<int:n>')
 
 @app.route('/')
 @app.route('/<int:id>')

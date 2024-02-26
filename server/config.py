@@ -7,14 +7,14 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 import bcrypt
 
-secret_key = os.environ.get('SECRET_KEY')
+secret_key = 'secret_key'
 app = Flask(
     __name__,
     static_url_path='',
     static_folder='../client/build',
     template_folder='../client/build'
 )
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://frankdillon:KKwsChm5QXtAldBrcskxpyNaIcred0lw@dpg-cmopuficn0vc73cj36s0-a.ohio-postgres.render.com/full_stack_project_7adg'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///127.0.0.1:5555'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = secret_key
 app.json.compact = False

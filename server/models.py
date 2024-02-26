@@ -14,6 +14,7 @@ class User(db.Model, SerializerMixin):
     bio = db.Column(db.String)
 
     nfts = db.relationship('Nft', backref='nft_owner')
+    reviews = db.relationship('Review', back_populates='user')
 
     @property
     def password(self):
@@ -64,7 +65,7 @@ class Review(db.Model):
     project_id = db.Column(db.Integer, db.ForeignKey('projects.id'), nullable=False)
     review_text = db.Column(db.String, nullable=False)
 
-    user = db.relationship('User', backref='reviews')
+    user = db.relationship('User', back_populates='reviews')
     project = db.relationship('Project', backref='reviews')
 
     def to_dict(self):
