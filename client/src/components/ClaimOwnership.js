@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import ProjectComponent from "./ProjectComponent";
+import { connect } from 'react-redux';
+import { ADD_FOUNDER,REMOVE_FOUNDER } from "./actions";
 
-function ClaimOwnership({ user }) {
+function ClaimOwnership({ ADD_FOUNDER,REMOVE_FOUNDER }) {
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
   const [ownershipClaim, setOwnershipClaim] = useState({
-    token_id: "", // Add more fields as needed
-    // ...
+    token_id: "",
   });
 
   useEffect(() => {
@@ -58,10 +59,12 @@ function ClaimOwnership({ user }) {
       console.error("An error occurred during ownership claim submission:", error);
     }
   }
+  function handleClaimAsFounder() {ADD_FOUNDER()}
 
   return (
+
     <div className="claim-ownership-div">
-      <h1>Own an NFT From These Collections?</h1>
+      <h1>Own an NFT From These Collections? yooo</h1>
       <h2>Select the Project to Claim Ownership of your NFT!</h2>
       <h5>Don't see your project? Click on 'Submit a Project' at the top of the screen to add it!</h5>
       <div className="project-component-div">
@@ -78,7 +81,7 @@ function ClaimOwnership({ user }) {
 
       {selectedProject && (
         <div>
-          <h3>Claim Ownership for {selectedProject.name}?</h3>
+          <h3>Claim Ownership of an NFT from {selectedProject.name} OR Claim Ownership of a project (if you're the founder or current owner)?</h3>
           <form onSubmit={handleSubmitOwnershipClaim}>
             <label>
               NFT Token ID:
@@ -88,8 +91,8 @@ function ClaimOwnership({ user }) {
                 onChange={(e) => setOwnershipClaim({ ...ownershipClaim, token_id: e.target.value })}
               />
             </label>
-            {/* Add other form fields as needed */}
-            <button type="submit">Claim Ownership</button>
+            <button type="submit">Claim Ownership of NFT</button>
+            <button onClick={handleClaimAsFounder}>Claim this Project as its Founder</button>
           </form>
         </div>
       )}
@@ -97,4 +100,4 @@ function ClaimOwnership({ user }) {
   );
 }
 
-export default ClaimOwnership;
+export default connect(null, { ADD_FOUNDER, REMOVE_FOUNDER })(ClaimOwnership);

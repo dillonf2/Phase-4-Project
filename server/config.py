@@ -14,7 +14,7 @@ app = Flask(
     static_folder='../client/build',
     template_folder='../client/build'
 )
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///127.0.0.1:5555'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = secret_key
 app.json.compact = False

@@ -233,7 +233,6 @@ class LeaveReview(Resource):
 class UserReviews(Resource):
     def get(self, n):
         users = User.query.all()
-        breakpoint()
         qualified_users = [{'user': user.username, 'reviews': len(user.reviews)} for user in users if len(user.reviews) >= n]
         return jsonify(qualified_users)
 

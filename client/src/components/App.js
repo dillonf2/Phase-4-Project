@@ -11,7 +11,7 @@ import SubmitProject from "./SubmitProject";
 import ClaimOwnership from "./ClaimOwnership";
 import LeaveReview from "./LeaveReview";
 
-function App() {
+function App(){
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
 
